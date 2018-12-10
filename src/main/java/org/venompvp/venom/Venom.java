@@ -17,11 +17,17 @@ import org.venompvp.venom.module.Module;
 import org.venompvp.venom.module.ModuleInfo;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @ModuleInfo(name = "Venom", author = "Headshot and LilProteinShake", version = "1.0", description = "Core VenomPVP libraries")
 public class Venom extends Module {
 
+
+    public Random random;
+    public ExecutorService executorService = Executors.newFixedThreadPool(8);
     private static Venom instance;
     public final String ERROR_CONTACT_AUTHOR = "Error please contact Lil Protein Shake#3129 or Headshot#7752 on discord.";
     public CommandHandler commandHandler;
@@ -38,6 +44,7 @@ public class Venom extends Module {
         instance = this;
         setupModule(this);
 
+        random = new Random();
         // Gson
         gson = new GsonBuilder()
                 .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(getVenom()))
