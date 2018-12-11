@@ -2,6 +2,8 @@ package org.venompvp.venom;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,7 +27,6 @@ import java.util.stream.Collectors;
 @ModuleInfo(name = "Venom", author = "Headshot and LilProteinShake", version = "1.0", description = "Core VenomPVP libraries")
 public class Venom extends Module {
 
-
     public Random random;
     public ExecutorService executorService = Executors.newFixedThreadPool(8);
     private static Venom instance;
@@ -33,6 +34,9 @@ public class Venom extends Module {
     public CommandHandler commandHandler;
     public DatabaseHandler databaseHandler;
     public Gson gson;
+    private Permission perms;
+    private Economy economy;
+
     private ArrayList<Module> modules = new ArrayList<>();
 
     public static Venom getInstance() {
@@ -41,6 +45,14 @@ public class Venom extends Module {
 
     @Override
     public void onEnable() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            getLogger().severe("You must have Vault installed.");
+            getServer().shutdown();
+            return;
+        }
+        perms = getServer().getServicesManager().load(Permission.class);
+        economy = getServer().getServicesManager().load(Economy.class);
+
         instance = this;
         setupModule(this);
 
@@ -83,5 +95,13 @@ public class Venom extends Module {
         meta.setLore(fileConfiguration.getStringList(section + ".lore").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
         itemStack.setItemMeta(meta);
         return itemStack;
+    }
+
+    public Permission getPerms() {
+        return perms;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 }
