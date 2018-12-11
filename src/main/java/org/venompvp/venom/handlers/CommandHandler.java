@@ -19,7 +19,7 @@ public class CommandHandler implements CommandExecutor {
 
     private Venom instance;
     private ArrayList<Command> commands = new ArrayList<>();
-    private HashMap<Module, List<Command>> moduleCommands = new HashMap<>();
+    private HashMap<Module, ArrayList<Command>> moduleCommands = new HashMap<>();
 
     public CommandHandler(Venom instance) {
         this.instance = instance;
@@ -31,7 +31,7 @@ public class CommandHandler implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command bukkitCommand, String label, String[] args) {
-        for (Map.Entry<Module, List<Command>> entry : moduleCommands.entrySet()) {
+        for (Map.Entry<Module, ArrayList<Command>> entry : moduleCommands.entrySet()) {
             List<Command> commands = entry.getValue();
             for (Command command : commands) {
                 if (bukkitCommand.getName().equalsIgnoreCase(command.getName()) || command.getAliases().contains(bukkitCommand.getName().toLowerCase())) {
@@ -71,26 +71,33 @@ public class CommandHandler implements CommandExecutor {
                                 commandSender.sendMessage(ChatColor.DARK_RED + "You don't have permission to access " + command.getUsage(label));
                                 return true;
                             }
-                            List<Argument> arguments = new ArrayList<>();
-                            for (int i = 0; i < command.getPresetArguments().size(); i++) {
-                                Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
-                                if (args.length <= i) {
-                                    commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                                    return true;
-                                }
-                                try {
-                                    Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
-                                    if (!argument.isArgumentType()) {
+                            if (!command.getPresetArguments().isEmpty()) {
+                                List<Argument> arguments = new ArrayList<>();
+                                for (int i = 0; i < command.getPresetArguments().size(); i++) {
+                                    Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
+                                    if (args.length <= i) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
                                         return true;
                                     }
-                                    arguments.add(argument);
-                                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                                    e.printStackTrace();
+                                    try {
+                                        Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
+                                        if (!argument.isArgumentType()) {
+                                            commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
+                                            return true;
+                                        }
+                                        arguments.add(argument);
+                                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                                command.execute(commandSender, arguments, label);
+                                return true;
+                            } else {
+                                if (command.getPresetArguments().isEmpty()) {
+                                    commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
+                                    return true;
                                 }
                             }
-                            command.execute(commandSender, arguments, label);
-                            return true;
                         }
                     }
                     if (!commandSender.hasPermission(command.getPermission())) {
@@ -108,28 +115,28 @@ public class CommandHandler implements CommandExecutor {
         return true;
     }
 
-    public void register(Module module, Command... cmds) {
-        for (Command command : cmds) {
-            CommandMap commandMap = getCommandMap();
-            PluginCommand pluginCommand = getPluginCommand(command);
-            if (command.getParentCommand() != null) {
-                throw new RuntimeException("You can't register a sub command!");
-            } else if (commandMap != null && pluginCommand != null) {
-                pluginCommand.setExecutor(this);
-                pluginCommand.setAliases(command.getAliases());
-                commandMap.register(instance.getDescription().getName(), pluginCommand);
-                instance.getLogger().info("Registered command: " + command.getName());
-                getModuleCommands().computeIfPresent(module, (module1, commands) -> {
-                    commands.add(command);
-                    return commands;
-                });
-                getModuleCommands().putIfAbsent(module, Collections.singletonList(command));
-                ((ParentCommand) command).setupSubCommands();
-            } else {
-                throw new RuntimeException("Unable to register command \n" + command.getName() + "\n. " + instance.ERROR_CONTACT_AUTHOR);
+    public void register(Module module, Command command) {
+        CommandMap commandMap = getCommandMap();
+        PluginCommand pluginCommand = getPluginCommand(command);
+        if (command.getParentCommand() != null) {
+            throw new RuntimeException("You can't register a sub command!");
+        } else if (commandMap != null && pluginCommand != null) {
+            pluginCommand.setExecutor(this);
+            pluginCommand.setAliases(command.getAliases());
+            commandMap.register(instance.getDescription().getName(), pluginCommand);
+            if (getModuleCommands().containsKey(module)) {
+                ArrayList<Command> commands = getModuleCommands().get(module);
+                commands.add(command);
+                getModuleCommands().put(module, commands);
             }
+            getModuleCommands().putIfAbsent(module, new ArrayList<>(Collections.singleton(command)));
+            ((ParentCommand) command).setupSubCommands();
+            instance.getLogger().info("Registered command: " + command.getName());
+        } else {
+            throw new RuntimeException("Unable to register command \n" + command.getName() + "\n. " + instance.ERROR_CONTACT_AUTHOR);
         }
     }
+
 
     public void unregister(Command command) {
         try {
@@ -171,7 +178,7 @@ public class CommandHandler implements CommandExecutor {
         return null;
     }
 
-    public HashMap<Module, List<Command>> getModuleCommands() {
+    public HashMap<Module, ArrayList<Command>> getModuleCommands() {
         return moduleCommands;
     }
 }
