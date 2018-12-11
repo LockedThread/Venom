@@ -22,8 +22,9 @@ public abstract class Command {
     private final Command parentCommand;
     private final List<Command> subCommands;
     private final String permission;
+    private final boolean requirePlayer;
 
-    public Command(Module module, Command parentCommand, String name, String description, List<Class<? extends Argument>> presetArguments, String permission, String... aliases) {
+    public Command(Module module, Command parentCommand, String name, String description, List<Class<? extends Argument>> presetArguments, String permission, boolean requirePlayer, String... aliases) {
         this.module = module;
         this.permission = permission;
         this.subCommands = new ArrayList<>();
@@ -31,11 +32,25 @@ public abstract class Command {
         this.name = name;
         this.description = description;
         this.presetArguments = presetArguments;
+        this.requirePlayer = requirePlayer;
         this.aliases = Arrays.asList(aliases);
     }
 
+    public Command(Module module, Command parentCommand, String name, String description, List<Class<? extends Argument>> presetArguments, String permission, String... aliases) {
+        this(module, parentCommand, name, description, presetArguments, permission, false, aliases);
+    }
+
+    public Command(Module module, String name, String description, List<Class<? extends Argument>> presetArguments, String permission, boolean requirePlayer, String... aliases) {
+        this(module, null, name, description, presetArguments, permission, requirePlayer, aliases);
+    }
+
     public Command(Module module, String name, String description, List<Class<? extends Argument>> presetArguments, String permission, String... aliases) {
-        this(module, null, name, description, presetArguments, permission, aliases);
+        this(module, null, name, description, presetArguments, permission, false, aliases);
+    }
+
+
+    public boolean isRequirePlayer() {
+        return requirePlayer;
     }
 
     public boolean isSubCommand() {
