@@ -15,7 +15,12 @@ import java.util.List;
 public class VenomVersionCommand extends Command {
 
     public VenomVersionCommand(Module module) {
-        super(module, "version", "checks the version", Collections.singletonList(StringArrayArgument.class), "venom.version", false);
+        super(module,
+                module.getCommandHandler().getCommand(VenomRootCommand.class),
+                "version",
+                "checks the version",
+                Collections.singletonList(StringArrayArgument.class),
+                "venom.version", false);
     }
 
     @Override
