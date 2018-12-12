@@ -1,5 +1,6 @@
 package org.venompvp.venom.handlers;
 
+import com.google.common.base.Joiner;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
@@ -8,6 +9,7 @@ import org.venompvp.venom.Venom;
 import org.venompvp.venom.commands.Command;
 import org.venompvp.venom.commands.ParentCommand;
 import org.venompvp.venom.commands.arguments.Argument;
+import org.venompvp.venom.commands.arguments.StringArrayArgument;
 import org.venompvp.venom.module.Module;
 
 import java.lang.reflect.Constructor;
@@ -47,6 +49,14 @@ public class CommandHandler implements CommandExecutor {
                                     args = Arrays.copyOfRange(args, 1, args.length);
                                     for (int i = 0; i < subCommand.getPresetArguments().size(); i++) {
                                         Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
+                                        if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
+                                            try {
+                                                subCommand.execute(commandSender, new ArrayList<>(Collections.<Argument>singletonList(StringArrayArgument.class.getConstructor(String.class).newInstance(Joiner.on(" ").skipNulls().join(args)))), label);
+                                            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                                                e.printStackTrace();
+                                            }
+                                            return true;
+                                        }
                                         if (args.length <= i) {
                                             commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
                                             return true;
@@ -75,6 +85,14 @@ public class CommandHandler implements CommandExecutor {
                                 List<Argument> arguments = new ArrayList<>();
                                 for (int i = 0; i < command.getPresetArguments().size(); i++) {
                                     Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
+                                    if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
+                                        try {
+                                            command.execute(commandSender, new ArrayList<>(Collections.<Argument>singletonList(StringArrayArgument.class.getConstructor(String.class).newInstance(Joiner.on(" ").skipNulls().join(args)))), label);
+                                        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                                            e.printStackTrace();
+                                        }
+                                        return true;
+                                    }
                                     if (args.length <= i) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
                                         return true;
