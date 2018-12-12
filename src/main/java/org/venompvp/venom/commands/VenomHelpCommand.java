@@ -1,6 +1,8 @@
 package org.venompvp.venom.commands;
 
-import mkremins.fanciful.FancyMessage;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.venompvp.venom.commands.arguments.Argument;
@@ -9,6 +11,7 @@ import org.venompvp.venom.module.Module;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VenomHelpCommand extends Command {
 
@@ -28,9 +31,10 @@ public class VenomHelpCommand extends Command {
                     command.getSubCommands().stream().map(subCommand -> ChatColor.YELLOW + subCommand.getUsage(subCommand.getName())).forEach(lines::add);
                 }
             });
-            new FancyMessage(key.getName()).color(ChatColor.RED)
-                    .tooltip(lines)
-                    .send(sender);
+            TextComponent textComponent = new TextComponent(key.getName());
+            textComponent.setColor(net.md_5.bungee.api.ChatColor.RED);
+            textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(lines.stream().map(s -> lines.get(lines.size() - 1).equals(s) ? s : s + "\n").collect(Collectors.joining())).create()));
+            sender.sendMessage(textComponent);
         });
     }
 
