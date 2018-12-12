@@ -32,4 +32,44 @@ public class Utils {
     public static String capitalizeEveryWord(String s) {
         return !s.contains(" ") ? StringUtils.capitalize(s.toLowerCase()) : Arrays.stream(s.split(" ")).map(word -> StringUtils.capitalize(word.toLowerCase())).collect(Collectors.joining());
     }
+
+    public static String toPercentage(double n) {
+        return String.format("%.0f", n * 100) + "%";
+    }
+
+    public static String versionFromProtcolVersion(int protocolVersion) {
+        switch (protocolVersion) {
+            case 4:
+                return "1.7.2";
+            case 5:
+                return "1.7.10";
+            case 47:
+                return "1.8";
+            case 107:
+                return "1.9";
+            case 108:
+                return "1.9.1";
+            case 110:
+                return "1.9.4";
+            case 210:
+                return "1.10.2";
+            case 315:
+                return "1.11";
+            case 316:
+                return "1.11.2";
+            case 335:
+                return "1.12";
+            case 338:
+                return "1.12.1";
+            case 340:
+                return "1.12.2";
+            case 393:
+                return "1.13";
+            case 401:
+                return "1.13.1";
+            case 404:
+                return "1.13.2";
+        }
+        return "UNKNOWN";
+    }
 }

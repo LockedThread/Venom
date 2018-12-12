@@ -1,5 +1,7 @@
 package org.venompvp.venom;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,6 +42,7 @@ public class Venom extends Module {
     private Permission perms;
     private Economy economy;
     private WorldGuardPlugin worldGuardPlugin;
+    private ProtocolManager protocolManager;
 
     private ArrayList<Module> modules = new ArrayList<>();
 
@@ -53,6 +56,7 @@ public class Venom extends Module {
             perms = getServer().getServicesManager().load(Permission.class);
             economy = getServer().getServicesManager().load(Economy.class);
             worldGuardPlugin = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+            protocolManager = ProtocolLibrary.getProtocolManager();
 
             instance = this;
             setupModule(this);
@@ -83,6 +87,7 @@ public class Venom extends Module {
         if (getServer().getPluginManager().getPlugin("Vault") == null) plugins.add("Vault");
         if (getServer().getPluginManager().getPlugin("WorldGuard") == null) plugins.add("WorldGuard");
         if (getServer().getPluginManager().getPlugin("Factions") == null) plugins.add("Factions");
+        if (getServer().getPluginManager().getPlugin("ProtocolLib") == null) plugins.add("ProtocolLib");
         if (!plugins.isEmpty()) {
             getLogger().severe(Joiner.on(", ").skipNulls().join(plugins) + " must be installed on the server!");
             getServer().shutdown();
@@ -123,5 +128,9 @@ public class Venom extends Module {
 
     public WorldGuardPlugin getWorldGuardPlugin() {
         return worldGuardPlugin;
+    }
+
+    public ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 }
