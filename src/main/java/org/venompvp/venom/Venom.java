@@ -18,7 +18,6 @@ import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
 import org.venompvp.venom.commands.VenomRootCommand;
 import org.venompvp.venom.handlers.CommandHandler;
-import org.venompvp.venom.handlers.DatabaseHandler;
 import org.venompvp.venom.module.Module;
 import org.venompvp.venom.module.ModuleInfo;
 
@@ -37,7 +36,6 @@ public class Venom extends Module {
     private static Venom instance;
     public final String ERROR_CONTACT_AUTHOR = "Error please contact Lil Protein Shake#3129 or Headshot#7752 on discord.";
     public CommandHandler commandHandler;
-    public DatabaseHandler databaseHandler;
     public Gson gson;
     private Permission perms;
     private Economy economy;
@@ -71,7 +69,6 @@ public class Venom extends Module {
                     .create();
 
             // Handlers
-            databaseHandler = new DatabaseHandler(getVenom());
             commandHandler = new CommandHandler(getVenom());
 
             final long startTime = System.currentTimeMillis();
@@ -96,11 +93,6 @@ public class Venom extends Module {
         return true;
 
     }
-
-    public DatabaseHandler getDatabaseHandler() {
-        return databaseHandler;
-    }
-
     public Gson getGson() {
         return gson;
     }

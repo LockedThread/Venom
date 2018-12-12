@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.venompvp.venom.Venom;
 import org.venompvp.venom.handlers.CommandHandler;
-import org.venompvp.venom.handlers.DatabaseHandler;
 
 public abstract class Module extends JavaPlugin {
 
