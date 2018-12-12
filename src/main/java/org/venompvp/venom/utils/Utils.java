@@ -2,12 +2,19 @@ package org.venompvp.venom.utils;
 
 import com.massivecraft.factions.Rel;
 import com.massivecraft.factions.entity.BoardColl;
+import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MPerm;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import org.apache.commons.lang3.StringUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.Venom;
 
 import java.util.Arrays;
@@ -71,5 +78,41 @@ public class Utils {
                 return "1.13.2";
         }
         return "UNKNOWN";
+    }
+
+    public static ItemStack configSectionToItemStack(FileConfiguration c, String where) {
+        ItemStack itemStack = new ItemStack(Material.matchMaterial(c.getString(where + ".material")));
+        ItemMeta meta = itemStack.getItemMeta();
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', c.getString(where + ".name")));
+        meta.setLore(c.getStringList(where + ".lore").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
+        itemStack.setItemMeta(meta);
+        return itemStack;
+    }
+
+    public static boolean isItem(ItemStack a, ItemStack b) {
+        return a != null && b != null && a.getType() == b.getType() &&
+                a.hasItemMeta() &&
+                b.hasItemMeta() &&
+                a.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', b.getItemMeta().getDisplayName()));
+    }
+
+    public static Faction getFactionByPlayer(Player player) {
+        return MPlayer.get(player).getFaction();
+    }
+
+    public static Faction getFactionAt(Location location) {
+        return getFactionAt(location.getChunk());
+    }
+
+    public static Faction getFactionAt(Chunk chunk) {
+        return BoardColl.get().getFactionAt(PS.valueOf(chunk));
+    }
+
+    public static boolean factionIsServerFaction(Faction faction) {
+        return faction.getName().equalsIgnoreCase("Wilderness") || faction.getName().equalsIgnoreCase("Warzone") || faction.getName().equalsIgnoreCase("Safezone");
+    }
+
+    public static boolean chunkIsInClaims(Faction faction, Chunk chunk) {
+        return getFactionAt(chunk).getName().equalsIgnoreCase(faction.getName());
     }
 }
