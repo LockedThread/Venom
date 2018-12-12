@@ -18,10 +18,6 @@ public abstract class Module extends JavaPlugin {
         getVenom().getModules().add(module);
     }
 
-    public DatabaseHandler getDatabaseHandler() {
-        return Venom.getInstance().databaseHandler;
-    }
-
     public Gson getGson() {
         return Venom.getInstance().gson;
     }
