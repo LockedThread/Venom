@@ -1,7 +1,9 @@
 package org.venompvp.venom;
 
+import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
@@ -19,6 +21,7 @@ import org.venompvp.venom.module.Module;
 import org.venompvp.venom.module.ModuleInfo;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -36,6 +39,7 @@ public class Venom extends Module {
     public Gson gson;
     private Permission perms;
     private Economy economy;
+    private WorldGuardPlugin worldGuardPlugin;
 
     private ArrayList<Module> modules = new ArrayList<>();
 
@@ -45,35 +49,47 @@ public class Venom extends Module {
 
     @Override
     public void onEnable() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            getLogger().severe("You must have Vault installed.");
-            getServer().shutdown();
-            return;
+        if (setupDependencies()) {
+            perms = getServer().getServicesManager().load(Permission.class);
+            economy = getServer().getServicesManager().load(Economy.class);
+            worldGuardPlugin = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
+
+            instance = this;
+            setupModule(this);
+
+            random = new Random();
+            // Gson
+            gson = new GsonBuilder()
+                    .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(getVenom()))
+                    .registerTypeAdapter(Location.class, new LocationAdapter(getVenom()))
+                    .setPrettyPrinting()
+                    .excludeFieldsWithoutExposeAnnotation()
+                    .create();
+
+            // Handlers
+            databaseHandler = new DatabaseHandler(getVenom());
+            commandHandler = new CommandHandler(getVenom());
+
+            final long startTime = System.currentTimeMillis();
+            commandHandler.register(this, new VenomRootCommand(this));
+
+
+            getLogger().info("Finished loading Venom (" + (System.currentTimeMillis() - startTime) + "ms)");
         }
-        perms = getServer().getServicesManager().load(Permission.class);
-        economy = getServer().getServicesManager().load(Economy.class);
+    }
 
-        instance = this;
-        setupModule(this);
+    private boolean setupDependencies() {
+        List<String> plugins = new ArrayList<>();
+        if (getServer().getPluginManager().getPlugin("Vault") == null) plugins.add("Vault");
+        if (getServer().getPluginManager().getPlugin("WorldGuard") == null) plugins.add("WorldGuard");
+        if (getServer().getPluginManager().getPlugin("Factions") == null) plugins.add("Factions");
+        if (!plugins.isEmpty()) {
+            getLogger().severe(Joiner.on(", ").skipNulls().join(plugins) + " must be installed on the server!");
+            getServer().shutdown();
+            return false;
+        }
+        return true;
 
-        random = new Random();
-        // Gson
-        gson = new GsonBuilder()
-                .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(getVenom()))
-                .registerTypeAdapter(Location.class, new LocationAdapter(getVenom()))
-                .setPrettyPrinting()
-                .excludeFieldsWithoutExposeAnnotation()
-                .create();
-
-        // Handlers
-        databaseHandler = new DatabaseHandler(getVenom());
-        commandHandler = new CommandHandler(getVenom());
-
-        final long startTime = System.currentTimeMillis();
-        commandHandler.register(this, new VenomRootCommand(this));
-
-
-        getLogger().info("Finished loading Venom (" + (System.currentTimeMillis() - startTime) + "ms)");
     }
 
     public DatabaseHandler getDatabaseHandler() {
@@ -103,5 +119,9 @@ public class Venom extends Module {
 
     public Economy getEconomy() {
         return economy;
+    }
+
+    public WorldGuardPlugin getWorldGuardPlugin() {
+        return worldGuardPlugin;
     }
 }
