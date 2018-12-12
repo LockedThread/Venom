@@ -36,6 +36,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.silkspawners</groupId>
+            <artifactId>SilkSpawners</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/libs/SilkSpawners.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>com.massivecraft</groupId>
             <artifactId>Factions</artifactId>
             <version>1.0</version>

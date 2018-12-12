@@ -6,6 +6,7 @@ import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
@@ -41,6 +42,7 @@ public class Venom extends Module {
     private Economy economy;
     private WorldGuardPlugin worldGuardPlugin;
     private ProtocolManager protocolManager;
+    private SilkUtil silkUtil;
 
     private ArrayList<Module> modules = new ArrayList<>();
 
@@ -55,6 +57,7 @@ public class Venom extends Module {
             economy = getServer().getServicesManager().load(Economy.class);
             worldGuardPlugin = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
             protocolManager = ProtocolLibrary.getProtocolManager();
+            silkUtil = SilkUtil.hookIntoSilkSpanwers();
 
             instance = this;
             setupModule(this);
@@ -85,6 +88,7 @@ public class Venom extends Module {
         if (getServer().getPluginManager().getPlugin("WorldGuard") == null) plugins.add("WorldGuard");
         if (getServer().getPluginManager().getPlugin("Factions") == null) plugins.add("Factions");
         if (getServer().getPluginManager().getPlugin("ProtocolLib") == null) plugins.add("ProtocolLib");
+        if (getServer().getPluginManager().getPlugin("SilkSpawners") == null) plugins.add("SilkSpawners");
         if (!plugins.isEmpty()) {
             getLogger().severe(Joiner.on(", ").skipNulls().join(plugins) + " must be installed on the server!");
             getServer().shutdown();
@@ -93,6 +97,7 @@ public class Venom extends Module {
         return true;
 
     }
+
     public Gson getGson() {
         return gson;
     }
@@ -124,5 +129,9 @@ public class Venom extends Module {
 
     public ProtocolManager getProtocolManager() {
         return protocolManager;
+    }
+
+    public SilkUtil getSilkUtil() {
+        return silkUtil;
     }
 }
