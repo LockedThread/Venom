@@ -4,10 +4,12 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.venompvp.venom.Venom;
 
 import java.io.IOException;
+import java.util.UUID;
 
 public class LocationAdapter extends TypeAdapter<Location> {
 
@@ -37,6 +39,20 @@ public class LocationAdapter extends TypeAdapter<Location> {
             jsonReader.nextNull();
             return null;
         }
-        return plugin.getGson().fromJson(jsonReader, Location.class);
+        double x = 0, y = 0, z = 0;
+        String uid = "";
+        while (jsonReader.hasNext()) {
+            switch (jsonReader.nextName()) {
+                case "x":
+                    x = jsonReader.nextDouble();
+                case "y":
+                    y = jsonReader.nextDouble();
+                case "z":
+                    z = jsonReader.nextDouble();
+                case "uid":
+                    uid = jsonReader.nextString();
+            }
+        }
+        return new Location(Bukkit.getWorld(UUID.fromString(uid)), x, y, z);
     }
 }

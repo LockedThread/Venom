@@ -7,12 +7,11 @@ import com.massivecraft.factions.entity.MPerm;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import org.apache.commons.lang3.StringUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.Venom;
@@ -81,9 +80,13 @@ public class Utils {
     }
 
     public static ItemStack configSectionToItemStack(FileConfiguration c, String where) {
-        ItemStack itemStack = new ItemStack(Material.matchMaterial(c.getString(where + ".material")));
+        ItemStack itemStack = c.getBoolean(where + ".glasspane.enabled") ? new ItemStack(Material.matchMaterial(c.getString(where + ".material")), 1, DyeColor.valueOf(c.getString(where + ".glasspane.color".toUpperCase())).getDyeData()) : new ItemStack(Material.matchMaterial(c.getString(where + ".material")));
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', c.getString(where + ".name")));
+        if (c.getBoolean(where + ".enchanted")) {
+            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
         meta.setLore(c.getStringList(where + ".lore").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
         itemStack.setItemMeta(meta);
         return itemStack;
