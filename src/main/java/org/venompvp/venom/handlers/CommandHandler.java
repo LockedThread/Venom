@@ -49,7 +49,7 @@ public class CommandHandler implements CommandExecutor {
                                     args = Arrays.copyOfRange(args, 1, args.length);
                                     for (int i = 0; i < subCommand.getPresetArguments().size(); i++) {
                                         Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
-                                        if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
+                                        if (argumentClass.getName().equals(StringArrayArgument.class.getName()) && args.length > 1) {
                                             try {
                                                 subCommand.execute(commandSender, new ArrayList<>(Collections.<Argument>singletonList(StringArrayArgument.class.getConstructor(String.class).newInstance(Joiner.on(" ").skipNulls().join(args)))), label);
                                             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
@@ -85,7 +85,7 @@ public class CommandHandler implements CommandExecutor {
                                 List<Argument> arguments = new ArrayList<>();
                                 for (int i = 0; i < command.getPresetArguments().size(); i++) {
                                     Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
-                                    if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
+                                    if (argumentClass.getName().equals(StringArrayArgument.class.getName()) && args.length > 1) {
                                         try {
                                             command.execute(commandSender, new ArrayList<>(Collections.<Argument>singletonList(StringArrayArgument.class.getConstructor(String.class).newInstance(Joiner.on(" ").skipNulls().join(args)))), label);
                                         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
