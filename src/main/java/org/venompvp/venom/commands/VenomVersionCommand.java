@@ -45,7 +45,7 @@ public class VenomVersionCommand extends Command {
 
     @Override
     public String getUsage(String label) {
-        return "/venom " + label;
+        return "/venom " + label + "[Event]";
     }
 
 }
