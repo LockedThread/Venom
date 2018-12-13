@@ -31,6 +31,6 @@ public class VenomRootCommand extends Command implements ParentCommand {
 
     @Override
     public void setupSubCommands() {
-        addSubCommands(new VenomModulesCommand(module), new VenomInfoCommand(module), new VenomHelpCommand(module), new VenomVersionCommand(module));
+        addSubCommands(new VenomModulesCommand(module), new VenomInfoCommand(module), new VenomHelpCommand(module), new VenomVersionCommand(module), new VenomEventLookupCommand(module));
     }
 }
