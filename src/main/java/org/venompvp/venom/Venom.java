@@ -65,14 +65,14 @@ public class Venom extends Module {
             random = new Random();
             // Gson
             gson = new GsonBuilder()
-                    .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(getVenom()))
-                    .registerTypeAdapter(Location.class, new LocationAdapter(getVenom()))
+                    .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(this))
+                    .registerTypeAdapter(Location.class, new LocationAdapter(this))
                     .setPrettyPrinting()
                     .excludeFieldsWithoutExposeAnnotation()
                     .create();
 
             // Handlers
-            commandHandler = new CommandHandler(getVenom());
+            commandHandler = new CommandHandler(this);
 
             final long startTime = System.currentTimeMillis();
             commandHandler.register(this, new VenomRootCommand(this));
