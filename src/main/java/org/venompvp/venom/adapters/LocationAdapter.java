@@ -41,18 +41,24 @@ public class LocationAdapter extends TypeAdapter<Location> {
         }
         double x = 0, y = 0, z = 0;
         String uid = "";
+        jsonReader.beginObject();
         while (jsonReader.hasNext()) {
             switch (jsonReader.nextName()) {
                 case "x":
                     x = jsonReader.nextDouble();
+                    break;
                 case "y":
                     y = jsonReader.nextDouble();
+                    break;
                 case "z":
                     z = jsonReader.nextDouble();
+                    break;
                 case "uid":
                     uid = jsonReader.nextString();
+                    break;
             }
         }
+        jsonReader.endObject();
         return new Location(Bukkit.getWorld(UUID.fromString(uid)), x, y, z);
     }
 }
