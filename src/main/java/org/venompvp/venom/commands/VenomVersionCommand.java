@@ -31,7 +31,7 @@ public class VenomVersionCommand extends Command {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8----------------------[&cVersions&8]----------------------"));
                 HashMap<Integer, Integer> map = new HashMap<>();
                 Bukkit.getOnlinePlayers().stream().mapToInt(player -> getModule().getVenom().getProtocolManager().getProtocolVersion(player)).forEach(protocolVersion -> {
-                    map.computeIfPresent(protocolVersion, (k, v) -> v++);
+                    map.computeIfPresent(protocolVersion, (k, v) -> v += 1);
                     map.putIfAbsent(protocolVersion, 1);
                 });
                 map.forEach((key, value) -> sender.sendMessage(ChatColor.RED + "" + Utils.versionFromProtcolVersion(key) + ChatColor.YELLOW + " : " + ChatColor.RED + value + " (" + Utils.toPercentage((double) value / (double) Bukkit.getOnlinePlayers().size()) + ")"));
