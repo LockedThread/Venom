@@ -80,7 +80,7 @@ public class Utils {
     }
 
     public static ItemStack configSectionToItemStack(FileConfiguration c, String where) {
-        ItemStack itemStack = c.getBoolean(where + ".glasspane.enabled") ? new ItemStack(Material.matchMaterial(c.getString(where + ".material")), 1, DyeColor.valueOf(c.getString(where + ".glasspane.color".toUpperCase())).getDyeData()) : new ItemStack(Material.matchMaterial(c.getString(where + ".material")));
+        ItemStack itemStack = c.getBoolean(where + ".glasspane.enabled") ? new ItemStack(Material.matchMaterial(c.getString(where + ".material")), 1, DyeColor.valueOf(c.getString(where + ".glasspane.color").toUpperCase()).getDyeData()) : new ItemStack(Material.matchMaterial(c.getString(where + ".material")));
         ItemMeta meta = itemStack.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', c.getString(where + ".name")));
         if (c.getBoolean(where + ".enchanted")) {
@@ -117,5 +117,14 @@ public class Utils {
 
     public static boolean chunkIsInClaims(Faction faction, Chunk chunk) {
         return getFactionAt(chunk).getName().equalsIgnoreCase(faction.getName());
+    }
+
+    public static boolean isInt(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
     }
 }
