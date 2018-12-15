@@ -23,9 +23,7 @@ public class VenomModulesCommand extends Command {
     @Override
     public void execute(CommandSender sender, List<Argument> args, String label) {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8----------------------[&cModules&8]----------------------"));
-        for (Module mod : module.getVenom().getModules()) {
-            sender.sendMessage(ChatColor.GREEN + mod.getModuleInfo().name() + " V" + mod.getModuleInfo().version() + " by " + mod.getModuleInfo().author());
-        }
+        module.getVenom().getModules().stream().map(mod -> ChatColor.GREEN + mod.getModuleInfo().name() + " V" + mod.getModuleInfo().version() + ChatColor.RED + " by " + mod.getModuleInfo().author()).forEach(sender::sendMessage);
         sender.sendMessage("");
     }
 

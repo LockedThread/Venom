@@ -35,9 +35,7 @@ public class VenomEventLookupCommand extends Command {
                 sender.sendMessage(ChatColor.DARK_RED + "No plugins have the event \"" + eventName + "\" registered");
             } else {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8----------------------[&cEvents&8]----------------------"));
-                for (String p : plugins) {
-                    sender.sendMessage(ChatColor.YELLOW + p);
-                }
+                plugins.stream().map(p -> ChatColor.YELLOW + p).forEach(sender::sendMessage);
             }
         }
     }
