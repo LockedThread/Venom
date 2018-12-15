@@ -18,6 +18,10 @@ public abstract class Module extends JavaPlugin {
         getVenom().getModules().add(module);
     }
 
+    public void disableCommands() {
+        getCommandHandler().getModuleCommands().entrySet().stream().filter(entry -> entry.getKey().equals(this)).forEach(entry -> entry.getValue().forEach(command -> getCommandHandler().unregister(command)));
+    }
+
     public Gson getGson() {
         return Venom.getInstance().gson;
     }

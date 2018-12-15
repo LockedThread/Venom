@@ -86,6 +86,11 @@ public class Venom extends Module {
         }
     }
 
+    @Override
+    public void onDisable() {
+        disableCommands();
+    }
+
     private boolean setupDependencies() {
         List<String> plugins = new ArrayList<>();
         if (getServer().getPluginManager().getPlugin("Vault") == null) plugins.add("Vault");
