@@ -22,6 +22,7 @@ import org.venompvp.venom.handlers.CommandHandler;
 import org.venompvp.venom.module.Module;
 import org.venompvp.venom.module.ModuleInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -53,6 +54,7 @@ public class Venom extends Module {
     @Override
     public void onEnable() {
         if (setupDependencies()) {
+            final long startTime = System.currentTimeMillis();
             perms = getServer().getServicesManager().load(Permission.class);
             economy = getServer().getServicesManager().load(Economy.class);
             worldGuardPlugin = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
@@ -73,10 +75,12 @@ public class Venom extends Module {
 
             // Handlers
             commandHandler = new CommandHandler(this);
-
-            final long startTime = System.currentTimeMillis();
             commandHandler.register(this, new VenomRootCommand(this));
 
+            File file = new File(getDataFolder().getParentFile().getParent(), "profiles");
+            if (!file.exists()) {
+                file.mkdirs();
+            }
 
             getLogger().info("Finished loading Venom (" + (System.currentTimeMillis() - startTime) + "ms)");
         }
