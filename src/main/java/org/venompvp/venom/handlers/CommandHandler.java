@@ -23,7 +23,6 @@ import java.util.*;
 public class CommandHandler implements CommandExecutor {
 
     private Venom instance;
-    private ArrayList<Command> commands = new ArrayList<>();
     private HashMap<Module, ArrayList<Command>> moduleCommands = new HashMap<>();
 
     public CommandHandler(Venom instance) {
