@@ -2,7 +2,10 @@ package org.venompvp.venom.handlers;
 
 import com.google.common.base.Joiner;
 import org.bukkit.ChatColor;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
 import org.venompvp.venom.Venom;
@@ -50,11 +53,7 @@ public class CommandHandler implements CommandExecutor {
                                     for (int i = 0; i < subCommand.getPresetArguments().size(); i++) {
                                         Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
                                         if (argumentClass.getName().equals(StringArrayArgument.class.getName()) && args.length > 1) {
-                                            try {
-                                                subCommand.execute(commandSender, new ArrayList<>(Collections.<Argument>singletonList(StringArrayArgument.class.getConstructor(String.class).newInstance(Joiner.on(" ").skipNulls().join(args)))), label);
-                                            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                                                e.printStackTrace();
-                                            }
+                                            subCommand.execute(commandSender, new ArrayList<>(Collections.singletonList(new StringArrayArgument(Joiner.on(" ").skipNulls().join(args)))), label);
                                             return true;
                                         }
                                         if (args.length <= i) {
@@ -86,11 +85,7 @@ public class CommandHandler implements CommandExecutor {
                                 for (int i = 0; i < command.getPresetArguments().size(); i++) {
                                     Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
                                     if (argumentClass.getName().equals(StringArrayArgument.class.getName()) && args.length > 1) {
-                                        try {
-                                            command.execute(commandSender, new ArrayList<>(Collections.<Argument>singletonList(StringArrayArgument.class.getConstructor(String.class).newInstance(Joiner.on(" ").skipNulls().join(args)))), label);
-                                        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
+                                        command.execute(commandSender, new ArrayList<>(Collections.singletonList(new StringArrayArgument(Joiner.on(" ").skipNulls().join(args)))), label);
                                         return true;
                                     }
                                     if (args.length <= i) {
@@ -158,17 +153,20 @@ public class CommandHandler implements CommandExecutor {
 
     public void unregister(Command command) {
         try {
-            Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
+            SimplePluginManager pluginManager = (SimplePluginManager) instance.getServer().getPluginManager();
+            Field field = SimplePluginManager.class.getDeclaredField("commandMap");
             field.setAccessible(true);
-            Object object = field.get(instance.getServer().getPluginManager());
+            Object object = field.get(pluginManager);
             if (object instanceof Map) {
-                Map<String, org.bukkit.command.Command> knownCommands = (Map<String, org.bukkit.command.Command>) field.get(instance.getServer().getPluginManager());
+                Map<String, org.bukkit.command.Command> knownCommands = (Map<String, org.bukkit.command.Command>) field.get(pluginManager);
                 knownCommands.remove(command.getName());
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             instance.getLogger().info("Unable to unregister " + command.getName() + ". " + instance.ERROR_CONTACT_AUTHOR);
             e.printStackTrace();
         }
+
+
     }
 
     private CommandMap getCommandMap() {
