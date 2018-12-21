@@ -41,7 +41,6 @@ public class VenomProfileCommand extends Command implements ParentCommand {
     }
 
     private boolean dump(String name) {
-        System.out.println(Bukkit.getWorldContainer().getAbsoluteFile().getName() + File.separator + "profiles" + File.separator + name + ".hprof");
         try {
             ManagementFactory
                     .newPlatformMXBeanProxy(ManagementFactory.getPlatformMBeanServer(), "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class)
