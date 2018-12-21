@@ -13,6 +13,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.weather.LightningStrikeEvent;
+import org.bukkit.event.weather.ThunderChangeEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.adapters.ItemStackAdapter;
@@ -31,7 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @ModuleInfo(name = "Venom", author = "Headshot and LilProteinShake", version = "1.0", description = "Core VenomPVP libraries")
-public class Venom extends Module {
+public class Venom extends Module implements Listener {
 
     public Random random;
     public ExecutorService executorService = Executors.newFixedThreadPool(8);
@@ -63,6 +68,8 @@ public class Venom extends Module {
 
             instance = this;
             setupModule(this);
+
+            getServer().getPluginManager().registerEvents(this, this);
 
             random = new Random();
             // Gson
@@ -142,5 +149,20 @@ public class Venom extends Module {
 
     public SilkUtil getSilkUtil() {
         return silkUtil;
+    }
+
+    @EventHandler
+    public void onLightningStrike(LightningStrikeEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onThunderChange(ThunderChangeEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onWeatherChange(WeatherChangeEvent event) {
+        event.setCancelled(true);
     }
 }
