@@ -6,9 +6,13 @@ import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MPerm;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.IBlockData;
+import net.minecraft.server.v1_8_R3.World;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
@@ -17,9 +21,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.Venom;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class Utils {
+
+    public static void editBlockType(Location blockLocation, Material updatedMatertial) {
+        Bukkit.getScheduler().runTaskAsynchronously(Venom.getInstance(), () -> {
+            World w = ((CraftWorld) blockLocation.getWorld()).getHandle();
+            BlockPosition bp = new BlockPosition(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ());
+            IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(updatedMatertial.getId());
+            Bukkit.getScheduler().runTask(Venom.getInstance(), () -> w.setTypeAndData(bp, ibd, 2));
+        });
+    }
 
     public static boolean compareLocations(Location locA, Location locB) {
         return locA.getBlockX() == locB.getBlockX() &&
@@ -126,5 +140,22 @@ public class Utils {
             return false;
         }
         return true;
+    }
+
+    public static String formatTime(long seconds) {
+        long dayCount = TimeUnit.SECONDS.toDays(seconds);
+        long secondsCount = seconds - TimeUnit.DAYS.toSeconds(dayCount);
+        long hourCount = TimeUnit.SECONDS.toHours(secondsCount);
+        secondsCount -= TimeUnit.HOURS.toSeconds(hourCount);
+        long minutesCount = TimeUnit.SECONDS.toMinutes(secondsCount);
+        secondsCount -= TimeUnit.MINUTES.toSeconds(minutesCount);
+        return String.format("%d %s, ", dayCount, (dayCount == 1) ? "day"
+                : "days") +
+                String.format("%d %s, ", hourCount, (hourCount == 1) ? "hour"
+                        : "hours") +
+                String.format("%d %s and ", minutesCount,
+                        (minutesCount == 1) ? "minute" : "minutes") +
+                String.format("%d %s.", secondsCount,
+                        (secondsCount == 1) ? "second" : "seconds");
     }
 }

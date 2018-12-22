@@ -48,7 +48,6 @@ public abstract class Command {
         this(module, null, name, description, presetArguments, permission, false, aliases);
     }
 
-
     public boolean isRequirePlayer() {
         return requirePlayer;
     }
