@@ -10,6 +10,7 @@ import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,6 +21,7 @@ import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.venompvp.venom.adapters.ChunkAdapter;
 import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
 import org.venompvp.venom.commands.VenomRootCommand;
@@ -75,7 +77,8 @@ public class Venom extends Module implements Listener {
             // Gson
             gson = new GsonBuilder()
                     .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(this))
-                    .registerTypeAdapter(Location.class, new LocationAdapter(this))
+                    .registerTypeAdapter(Location.class, new LocationAdapter())
+                    .registerTypeAdapter(Chunk.class, new ChunkAdapter())
                     .setPrettyPrinting()
                     .excludeFieldsWithoutExposeAnnotation()
                     .create();
