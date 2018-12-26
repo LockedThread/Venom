@@ -9,13 +9,9 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
 import org.venompvp.venom.commands.VenomRootCommand;
@@ -29,7 +25,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 @ModuleInfo(name = "Venom", author = "Headshot and LilProteinShake", version = "1.0", description = "Core VenomPVP libraries")
 public class Venom extends Module implements Listener {
@@ -116,15 +111,6 @@ public class Venom extends Module implements Listener {
 
     public ArrayList<Module> getModules() {
         return modules;
-    }
-
-    public ItemStack itemStackFromConfig(FileConfiguration fileConfiguration, String section) {
-        ItemStack itemStack = new ItemStack(Material.matchMaterial(fileConfiguration.getString(section + ".material")));
-        ItemMeta meta = itemStack.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', fileConfiguration.getString(section + ".name")));
-        meta.setLore(fileConfiguration.getStringList(section + ".lore").stream().map(s -> ChatColor.translateAlternateColorCodes('&', s)).collect(Collectors.toList()));
-        itemStack.setItemMeta(meta);
-        return itemStack;
     }
 
     public Permission getPerms() {
