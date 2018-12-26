@@ -39,7 +39,7 @@ public class Utils {
         return locA.getBlockX() == locB.getBlockX() &&
                 locA.getBlockZ() == locB.getBlockZ() &&
                 locA.getBlockY() == locB.getBlockY() &&
-                locA.getWorld().getUID().toString().equals(locB.getWorld().getUID().toString());
+                locA.getWorld().getName().equals(locB.getWorld().getName());
     }
 
     public static boolean canEdit(Player player, Location location) {
