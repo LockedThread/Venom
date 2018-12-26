@@ -19,6 +19,10 @@ public class LazyChunk {
         this.z = z;
     }
 
+    public LazyChunk(Chunk bukkitChunk) {
+        this(bukkitChunk.getWorld().getUID().toString(), bukkitChunk.getX(), bukkitChunk.getZ());
+    }
+
     public String getUid() {
         return uid;
     }
