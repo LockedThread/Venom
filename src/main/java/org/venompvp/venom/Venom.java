@@ -21,13 +21,11 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.adapters.ItemStackAdapter;
-import org.venompvp.venom.adapters.LazyChunkAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
 import org.venompvp.venom.commands.VenomRootCommand;
 import org.venompvp.venom.handlers.CommandHandler;
 import org.venompvp.venom.module.Module;
 import org.venompvp.venom.module.ModuleInfo;
-import org.venompvp.venom.objs.LazyChunk;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -78,7 +76,6 @@ public class Venom extends Module implements Listener {
             gson = new GsonBuilder()
                     .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(this))
                     .registerTypeAdapter(Location.class, new LocationAdapter())
-                    .registerTypeAdapter(LazyChunk.class, new LazyChunkAdapter())
                     .setPrettyPrinting()
                     .excludeFieldsWithoutExposeAnnotation()
                     .create();
