@@ -4,21 +4,19 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
+import org.venompvp.venom.objs.LazyChunk;
 
 import java.io.IOException;
-import java.util.UUID;
 
-public class ChunkAdapter extends TypeAdapter<Chunk> {
+public class LazyChunkAdapter extends TypeAdapter<LazyChunk> {
 
     @Override
-    public void write(JsonWriter jsonWriter, Chunk chunk) throws IOException {
+    public void write(JsonWriter jsonWriter, LazyChunk chunk) throws IOException {
         if (chunk == null) {
             jsonWriter.nullValue();
         } else {
             jsonWriter.beginObject();
-            jsonWriter.name("uid").value(chunk.getWorld().getUID().toString());
+            jsonWriter.name("uid").value(chunk.getUid());
             jsonWriter.name("x").value(chunk.getX());
             jsonWriter.name("z").value(chunk.getZ());
             jsonWriter.endObject();
@@ -26,7 +24,7 @@ public class ChunkAdapter extends TypeAdapter<Chunk> {
     }
 
     @Override
-    public Chunk read(JsonReader jsonReader) throws IOException {
+    public LazyChunk read(JsonReader jsonReader) throws IOException {
         if (jsonReader.peek() == JsonToken.NULL) {
             jsonReader.nextNull();
             return null;
@@ -48,6 +46,6 @@ public class ChunkAdapter extends TypeAdapter<Chunk> {
             }
         }
         jsonReader.endObject();
-        return Bukkit.getWorld(UUID.fromString(uid)).getChunkAt(x, z);
+        return new LazyChunk(uid, x, z);
     }
 }
