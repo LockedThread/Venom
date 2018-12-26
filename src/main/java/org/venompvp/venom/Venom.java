@@ -13,11 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.weather.LightningStrikeEvent;
-import org.bukkit.event.weather.ThunderChangeEvent;
-import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.adapters.ItemStackAdapter;
@@ -149,20 +145,5 @@ public class Venom extends Module implements Listener {
 
     public SilkUtil getSilkUtil() {
         return silkUtil;
-    }
-
-    @EventHandler
-    public void onLightningStrike(LightningStrikeEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onThunderChange(ThunderChangeEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onWeatherChange(WeatherChangeEvent event) {
-        event.setCancelled(true);
     }
 }
