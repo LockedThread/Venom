@@ -15,4 +15,9 @@ public class IntegerArgument extends Argument<Integer> {
             return false;
         }
     }
+
+    @Override
+    public Integer getValue() {
+        return Integer.parseInt(check);
+    }
 }
