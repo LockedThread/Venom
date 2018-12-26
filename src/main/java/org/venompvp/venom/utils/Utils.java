@@ -26,13 +26,22 @@ import java.util.stream.Collectors;
 
 public class Utils {
 
-    public static void editBlockType(Location blockLocation, Material updatedMatertial) {
+    public static void editBlockType(Location blockLocation, Material updatedMatertial, boolean update) {
         Bukkit.getScheduler().runTaskAsynchronously(Venom.getInstance(), () -> {
             World w = ((CraftWorld) blockLocation.getWorld()).getHandle();
             BlockPosition bp = new BlockPosition(blockLocation.getX(), blockLocation.getY(), blockLocation.getZ());
             IBlockData ibd = net.minecraft.server.v1_8_R3.Block.getByCombinedId(updatedMatertial.getId());
-            Bukkit.getScheduler().runTask(Venom.getInstance(), () -> w.setTypeAndData(bp, ibd, 2));
+            Bukkit.getScheduler().runTask(Venom.getInstance(), () -> {
+                if (update)
+                    w.setTypeUpdate(bp, ibd);
+                else
+                    w.setTypeAndData(bp, ibd, 2);
+            });
         });
+    }
+
+    public static void editBlockType(Location blockLocation, Material updatedMatertial) {
+        editBlockType(blockLocation, updatedMatertial, false);
     }
 
     public static boolean compareLocations(Location locA, Location locB) {
