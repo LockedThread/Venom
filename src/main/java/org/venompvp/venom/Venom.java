@@ -33,8 +33,8 @@ public class Venom extends Module implements Listener {
     public ExecutorService executorService = Executors.newFixedThreadPool(8);
     private static Venom instance;
     public final String ERROR_CONTACT_AUTHOR = "Error please contact Simpleness#6666 on discord.";
-    public CommandHandler commandHandler;
-    public Gson gson;
+    private CommandHandler commandHandler;
+    private Gson gson;
     private Economy economy;
     private WorldGuardPlugin worldGuardPlugin;
     private ProtocolManager protocolManager;

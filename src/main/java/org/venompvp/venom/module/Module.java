@@ -23,7 +23,7 @@ public abstract class Module extends JavaPlugin {
     }
 
     public Gson getGson() {
-        return Venom.getInstance().gson;
+        return Venom.getInstance().getGson();
     }
 
     public Venom getVenom() {
@@ -31,7 +31,7 @@ public abstract class Module extends JavaPlugin {
     }
 
     public CommandHandler getCommandHandler() {
-        return Venom.getInstance().commandHandler;
+        return Venom.getInstance().getCommandHandler();
     }
 
     public ModuleInfo getModuleInfo() {
