@@ -14,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
+import org.venompvp.venom.commands.PlayTimeCommand;
 import org.venompvp.venom.commands.VenomRootCommand;
 import org.venompvp.venom.handlers.CommandHandler;
 import org.venompvp.venom.module.Module;
@@ -74,6 +75,7 @@ public class Venom extends Module implements Listener {
             // Handlers
             commandHandler = new CommandHandler(this);
             commandHandler.register(this, new VenomRootCommand(this));
+            commandHandler.register(this, new PlayTimeCommand(this));
 
             File file = new File(getDataFolder().getParentFile().getParent(), "profiles");
             if (!file.exists()) {

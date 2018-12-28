@@ -1,9 +1,13 @@
 package org.venompvp.venom.commands.arguments;
 
-public class IntegerArgument extends Argument<Integer> {
+public class OptionalIntegerArgument extends OptionalArgument<Integer> {
 
-    public IntegerArgument(String check) {
+    public OptionalIntegerArgument(String check) {
         super(check);
+    }
+
+    public OptionalIntegerArgument() {
+        super();
     }
 
     @Override

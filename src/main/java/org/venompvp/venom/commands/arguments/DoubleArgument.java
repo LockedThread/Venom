@@ -15,4 +15,9 @@ public class DoubleArgument extends Argument<Double> {
             return false;
         }
     }
+
+    @Override
+    public String unableToParse() {
+        return check + " is unable to parse as a Double";
+    }
 }

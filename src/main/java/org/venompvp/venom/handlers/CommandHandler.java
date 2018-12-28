@@ -1,6 +1,5 @@
 package org.venompvp.venom.handlers;
 
-import com.google.common.base.Joiner;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
@@ -12,6 +11,7 @@ import org.venompvp.venom.Venom;
 import org.venompvp.venom.commands.Command;
 import org.venompvp.venom.commands.ParentCommand;
 import org.venompvp.venom.commands.arguments.Argument;
+import org.venompvp.venom.commands.arguments.OptionalArgument;
 import org.venompvp.venom.commands.arguments.StringArrayArgument;
 import org.venompvp.venom.module.Module;
 
@@ -35,96 +35,131 @@ public class CommandHandler implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command bukkitCommand, String label, String[] args) {
-        for (Map.Entry<Module, ArrayList<Command>> entry : moduleCommands.entrySet()) {
-            List<Command> commands = entry.getValue();
-            for (Command command : commands) {
-                if (bukkitCommand.getName().equalsIgnoreCase(command.getName()) || command.getAliases().contains(bukkitCommand.getName().toLowerCase())) {
-                    if (args.length > 0) {
-                        if (!command.getSubCommands().isEmpty()) {
-                            for (Command subCommand : command.getSubCommands()) {
-                                if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase())) {
-                                    if (!commandSender.hasPermission(subCommand.getPermission())) {
-                                        commandSender.sendMessage(ChatColor.DARK_RED + "You don't have permission to access " + subCommand.getUsage(label));
-                                        return true;
-                                    }
-                                    List<Argument> arguments = new ArrayList<>();
-                                    args = Arrays.copyOfRange(args, 1, args.length);
-                                    for (int i = 0; i < subCommand.getPresetArguments().size(); i++) {
-                                        Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
-                                        if (argumentClass.getName().equals(StringArrayArgument.class.getName()) && args.length > 1) {
-                                            subCommand.execute(commandSender, new ArrayList<>(Collections.singletonList(new StringArrayArgument(Joiner.on(" ").skipNulls().join(args)))), label);
-                                            return true;
-                                        }
-                                        if (args.length <= i) {
-                                            commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                                            return true;
-                                        }
-                                        try {
-                                            Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
-                                            if (!argument.isArgumentType()) {
-                                                commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                                                return true;
-                                            }
-                                            arguments.add(argument);
-                                        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                    subCommand.execute(commandSender, arguments, label);
-                                    return true;
-                                }
+        moduleCommands.forEach((key, value) ->
+                value.stream()
+                        .filter(command -> bukkitCommand.getName().equalsIgnoreCase(command.getName()) || command.getAliases().contains(bukkitCommand.getName().toLowerCase()))
+                        .forEach(command -> {
+                            try {
+                                runCommand(commandSender, command, args, label);
+                            } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                                e.printStackTrace();
                             }
-                        } else {
-                            if (!commandSender.hasPermission(command.getPermission())) {
-                                commandSender.sendMessage(ChatColor.DARK_RED + "You don't have permission to access " + command.getUsage(label));
-                                return true;
-                            }
-                            if (!command.getPresetArguments().isEmpty()) {
-                                List<Argument> arguments = new ArrayList<>();
-                                for (int i = 0; i < command.getPresetArguments().size(); i++) {
-                                    Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
-                                    if (argumentClass.getName().equals(StringArrayArgument.class.getName()) && args.length > 1) {
-                                        command.execute(commandSender, new ArrayList<>(Collections.singletonList(new StringArrayArgument(Joiner.on(" ").skipNulls().join(args)))), label);
-                                        return true;
-                                    }
-                                    if (args.length <= i) {
-                                        commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                                        return true;
-                                    }
-                                    try {
-                                        Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
-                                        if (!argument.isArgumentType()) {
-                                            commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                                            return true;
-                                        }
-                                        arguments.add(argument);
-                                    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                                command.execute(commandSender, arguments, label);
-                                return true;
+                        }));
+        return true;
+    }
+
+    private void runCommand(CommandSender sender, Command command, String[] args, String label) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (command.getPresetArguments().isEmpty() && args.length == 0) {
+            command.execute(sender, Collections.emptyList(), label);
+            System.out.println("0");
+        } else {
+            System.out.println("1");
+            if (!command.getSubCommands().isEmpty()) {
+                System.out.println("2");
+                if (args.length > 0) {
+                    System.out.println("3");
+                    for (Command subCommand : command.getSubCommands()) {
+                        System.out.println("4");
+                        if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase())) {
+                            System.out.println("5");
+                            if (subCommand.getPresetArguments().size() == 0) {
+                                subCommand.execute(sender, Collections.emptyList(), label);
+                                System.out.println("6");
+                                return;
                             } else {
-                                if (command.getPresetArguments().isEmpty()) {
-                                    commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                                    return true;
+                                System.out.println("7");
+                                final String[] subCommandArgs = Arrays.copyOfRange(args, 1, args.length);
+                                ArrayList<Argument> arguments = new ArrayList<>();
+                                for (int i = 0; i < subCommand.getPresetArguments().size(); i++) {
+                                    System.out.println("8 - " + i);
+                                    Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
+                                    if (argumentClass.getSuperclass().getName().equalsIgnoreCase(OptionalArgument.class.getName())) {
+                                        System.out.println("8-opt-1");
+                                        if (subCommandArgs.length - 1 >= i) {
+                                            System.out.println("8-opt-2");
+                                            Argument argument = argumentClass.getConstructor(String.class).newInstance(subCommandArgs[i]);
+                                            if (!argument.isArgumentType()) {
+                                                System.out.println("8-opt-3");
+                                                sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
+                                                return;
+                                            } else {
+                                                System.out.println("8-opt-4");
+                                                arguments.add(argument);
+                                            }
+                                            System.out.println("8-opt-5");
+                                        } else {
+                                            System.out.println("8-opt-6");
+                                            arguments.add(argumentClass.getConstructor().newInstance());
+                                        }
+                                        System.out.println("9");
+                                    } else if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
+                                        StringArrayArgument stringArrayArgument = (StringArrayArgument) argumentClass.getConstructor(String[].class).newInstance((Object) Arrays.copyOfRange(args, i, args.length));
+                                        command.execute(sender, Collections.singletonList(stringArrayArgument), label);
+                                        return;
+                                    } else {
+                                        System.out.println("10");
+                                        Argument argument = argumentClass.getConstructor(String.class).newInstance(subCommandArgs[i]);
+                                        if (!argument.isArgumentType()) {
+                                            System.out.println("11");
+                                            sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
+                                            return;
+                                        }
+                                        System.out.println("12");
+                                        arguments.add(argument);
+                                    }
                                 }
+                                System.out.println("13");
+                                subCommand.execute(sender, arguments, args[0]);
                             }
                         }
                     }
-                    if (!commandSender.hasPermission(command.getPermission())) {
-                        commandSender.sendMessage(ChatColor.DARK_RED + "You don't have permission to access " + command.getUsage(label));
-                        return true;
+                }
+            } else {
+                System.out.println("15");
+                if (command.getPresetArguments().size() == 0) {
+                    System.out.println("16");
+                    command.execute(sender, Collections.emptyList(), label);
+                } else {
+                    System.out.println("17");
+                    ArrayList<Argument> arguments = new ArrayList<>();
+                    for (int i = 0; i < command.getPresetArguments().size(); i++) {
+                        System.out.println("18 - " + i);
+                        Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
+                        if (argumentClass.getSuperclass().getName().equalsIgnoreCase(OptionalArgument.class.getName())) {
+                            if (args.length - 1 >= i) {
+                                Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
+                                if (!argument.isArgumentType()) {
+                                    sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
+                                    return;
+                                } else {
+                                    arguments.add(argument);
+                                }
+                            } else {
+                                arguments.add(argumentClass.getConstructor().newInstance());
+                            }
+                            System.out.println("19");
+                            return;
+                        } else if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
+                            StringArrayArgument stringArrayArgument = (StringArrayArgument) argumentClass.getConstructor(String[].class).newInstance((Object) Arrays.copyOfRange(args, i, args.length));
+                            command.execute(sender, Collections.singletonList(stringArrayArgument), label);
+                            return;
+                        } else {
+                            System.out.println("20");
+                            Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
+                            if (!argument.isArgumentType()) {
+                                System.out.println("21");
+                                sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
+                                return;
+                            }
+                            System.out.println("22");
+                            arguments.add(argument);
+                        }
                     }
-                    if (args.length == 0 && !command.getPresetArguments().isEmpty()) {
-                        commandSender.sendMessage(ChatColor.DARK_RED + "Incorrect usage, please use: " + command.getUsage(label));
-                        return true;
-                    }
-                    command.execute(commandSender, Collections.emptyList(), label);
+                    System.out.println("23");
+                    command.execute(sender, arguments, label);
                 }
             }
         }
-        return true;
     }
 
     public void register(Module module, Command command) {

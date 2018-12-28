@@ -19,4 +19,6 @@ public abstract class Argument<T> {
     public void setValue(T value) {
         this.value = value;
     }
+
+    public abstract String unableToParse();
 }
