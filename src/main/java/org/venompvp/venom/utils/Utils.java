@@ -18,8 +18,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.venompvp.venom.Venom;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -166,13 +171,45 @@ public class Utils {
         secondsCount -= TimeUnit.HOURS.toSeconds(hourCount);
         long minutesCount = TimeUnit.SECONDS.toMinutes(secondsCount);
         secondsCount -= TimeUnit.MINUTES.toSeconds(minutesCount);
-        return String.format("%d %s, ", dayCount, (dayCount == 1) ? "day"
-                : "days") +
-                String.format("%d %s, ", hourCount, (hourCount == 1) ? "hour"
-                        : "hours") +
-                String.format("%d %s and ", minutesCount,
-                        (minutesCount == 1) ? "minute" : "minutes") +
-                String.format("%d %s.", secondsCount,
-                        (secondsCount == 1) ? "second" : "seconds");
+        StringBuilder stringBuilder = new StringBuilder();
+        if (dayCount > 0) {
+            stringBuilder.append(String.format("%d %s, ", dayCount, (dayCount == 1) ? "day" : "days"));
+        }
+        if (hourCount > 0) {
+            stringBuilder.append(String.format("%d %s, ", hourCount, (hourCount == 1) ? "hour" : "hours"));
+        }
+        if (minutesCount > 0) {
+            stringBuilder.append(String.format("%d %s, ", minutesCount, (minutesCount == 1) ? "minute" : "minutes"));
+        }
+        stringBuilder.append(String.format("%d %s.", secondsCount, (secondsCount == 1) ? "second" : "seconds"));
+        return stringBuilder.toString();
+    }
+
+    public static long getOfflinePlayerStatistic(OfflinePlayer player, Statistic statistic) {
+        File playerStatistics = new File(new File(Bukkit.getServer().getWorlds().get(0).getWorldFolder(), "stats"), player.getUniqueId().toString() + ".json");
+        if (playerStatistics.exists()) {
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject;
+            try {
+                jsonObject = (JSONObject) parser.parse(new FileReader(playerStatistics));
+            } catch (IOException | org.json.simple.parser.ParseException e) {
+                Venom.getInstance().getLogger().severe(e.getMessage());
+                return 0;
+            }
+            StringBuilder statisticNmsName = new StringBuilder("stat.");
+            for (char character : statistic.name().toCharArray()) {
+                if (statisticNmsName.charAt(statisticNmsName.length() - 1) == '_') {
+                    statisticNmsName.setCharAt(statisticNmsName.length() - 1, Character.toUpperCase(character));
+                } else {
+                    statisticNmsName.append(Character.toLowerCase(character));
+                }
+            }
+            if (jsonObject.containsKey(statisticNmsName.toString())) {
+                return (long) jsonObject.get(statisticNmsName.toString());
+            } else {
+                return 0;
+            }
+        }
+        return -1;
     }
 }
