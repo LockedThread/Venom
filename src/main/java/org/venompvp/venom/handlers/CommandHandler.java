@@ -51,79 +51,55 @@ public class CommandHandler implements CommandExecutor {
     private void runCommand(CommandSender sender, Command command, String[] args, String label) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         if (command.getPresetArguments().isEmpty() && args.length == 0) {
             command.execute(sender, Collections.emptyList(), label);
-            System.out.println("0");
         } else {
-            System.out.println("1");
             if (!command.getSubCommands().isEmpty()) {
-                System.out.println("2");
                 if (args.length > 0) {
-                    System.out.println("3");
                     for (Command subCommand : command.getSubCommands()) {
-                        System.out.println("4");
                         if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase())) {
-                            System.out.println("5");
                             if (subCommand.getPresetArguments().size() == 0) {
                                 subCommand.execute(sender, Collections.emptyList(), label);
-                                System.out.println("6");
                                 return;
                             } else {
-                                System.out.println("7");
                                 final String[] subCommandArgs = Arrays.copyOfRange(args, 1, args.length);
                                 ArrayList<Argument> arguments = new ArrayList<>();
                                 for (int i = 0; i < subCommand.getPresetArguments().size(); i++) {
-                                    System.out.println("8 - " + i);
                                     Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
                                     if (argumentClass.getSuperclass().getName().equalsIgnoreCase(OptionalArgument.class.getName())) {
-                                        System.out.println("8-opt-1");
                                         if (subCommandArgs.length - 1 >= i) {
-                                            System.out.println("8-opt-2");
                                             Argument argument = argumentClass.getConstructor(String.class).newInstance(subCommandArgs[i]);
                                             if (!argument.isArgumentType()) {
-                                                System.out.println("8-opt-3");
                                                 sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
                                                 return;
                                             } else {
-                                                System.out.println("8-opt-4");
                                                 arguments.add(argument);
                                             }
-                                            System.out.println("8-opt-5");
                                         } else {
-                                            System.out.println("8-opt-6");
                                             arguments.add(argumentClass.getConstructor().newInstance());
                                         }
-                                        System.out.println("9");
                                     } else if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
                                         StringArrayArgument stringArrayArgument = (StringArrayArgument) argumentClass.getConstructor(String[].class).newInstance((Object) Arrays.copyOfRange(args, i, args.length));
                                         command.execute(sender, Collections.singletonList(stringArrayArgument), label);
                                         return;
                                     } else {
-                                        System.out.println("10");
                                         Argument argument = argumentClass.getConstructor(String.class).newInstance(subCommandArgs[i]);
                                         if (!argument.isArgumentType()) {
-                                            System.out.println("11");
                                             sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
                                             return;
                                         }
-                                        System.out.println("12");
                                         arguments.add(argument);
                                     }
                                 }
-                                System.out.println("13");
                                 subCommand.execute(sender, arguments, args[0]);
                             }
                         }
                     }
                 }
             } else {
-                System.out.println("15");
                 if (command.getPresetArguments().size() == 0) {
-                    System.out.println("16");
                     command.execute(sender, Collections.emptyList(), label);
                 } else {
-                    System.out.println("17");
                     ArrayList<Argument> arguments = new ArrayList<>();
                     for (int i = 0; i < command.getPresetArguments().size(); i++) {
-                        System.out.println("18 - " + i);
                         Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
                         if (argumentClass.getSuperclass().getName().equalsIgnoreCase(OptionalArgument.class.getName())) {
                             if (args.length - 1 >= i) {
@@ -137,25 +113,20 @@ public class CommandHandler implements CommandExecutor {
                             } else {
                                 arguments.add(argumentClass.getConstructor().newInstance());
                             }
-                            System.out.println("19");
                             return;
                         } else if (argumentClass.getName().equals(StringArrayArgument.class.getName())) {
                             StringArrayArgument stringArrayArgument = (StringArrayArgument) argumentClass.getConstructor(String[].class).newInstance((Object) Arrays.copyOfRange(args, i, args.length));
                             command.execute(sender, Collections.singletonList(stringArrayArgument), label);
                             return;
                         } else {
-                            System.out.println("20");
                             Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
                             if (!argument.isArgumentType()) {
-                                System.out.println("21");
                                 sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
                                 return;
                             }
-                            System.out.println("22");
                             arguments.add(argument);
                         }
                     }
-                    System.out.println("23");
                     command.execute(sender, arguments, label);
                 }
             }
