@@ -13,7 +13,6 @@ import org.venompvp.venom.utils.Utils;
 import java.util.Collections;
 import java.util.List;
 
-
 public class PlayTimeCommand extends Command implements ParentCommand {
 
     public PlayTimeCommand(Module module) {
@@ -26,7 +25,7 @@ public class PlayTimeCommand extends Command implements ParentCommand {
         if (argument.isPresent()) {
             OfflinePlayer offlinePlayer = argument.getValue();
             if (!offlinePlayer.isOnline()) {
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + offlinePlayer.getName() + "'s PlayTime: &f" + Utils.formatTime(Utils.getOfflinePlayerStatistic(offlinePlayer, Statistic.PLAY_ONE_TICK) / 20)));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + offlinePlayer.getName() + "'s PlayTime: &f" + Utils.formatTime(Utils.getOfflinePlayTime(offlinePlayer) / 20)));
             } else if (offlinePlayer.isOnline()) {
                 Player player = offlinePlayer.getPlayer();
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e" + player.getName() + "'s PlayTime: &f" + Utils.formatTime(player.getStatistic(Statistic.PLAY_ONE_TICK) / 20)));
