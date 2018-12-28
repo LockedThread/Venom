@@ -81,7 +81,7 @@ public class Venom extends Module {
 
     @Override
     public void onDisable() {
-        disableCommands();
+        disableCommands(this);
     }
 
     private boolean setupDependencies() {
