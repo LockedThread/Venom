@@ -9,7 +9,6 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
@@ -27,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @ModuleInfo(name = "Venom", author = "Headshot and Simpleness", version = "2.0", description = "Core VenomPVP libraries")
-public class Venom extends Module implements Listener {
+public class Venom extends Module {
 
     public Random random;
     public ExecutorService executorService = Executors.newFixedThreadPool(8);
@@ -39,7 +38,6 @@ public class Venom extends Module implements Listener {
     private WorldGuardPlugin worldGuardPlugin;
     private ProtocolManager protocolManager;
     private SilkUtil silkUtil;
-
     private ArrayList<Module> modules = new ArrayList<>();
 
     public static Venom getInstance() {
@@ -57,8 +55,6 @@ public class Venom extends Module implements Listener {
 
             instance = this;
             setupModule(this);
-
-            getServer().getPluginManager().registerEvents(this, this);
 
             random = new Random();
             // Gson
@@ -104,8 +100,14 @@ public class Venom extends Module implements Listener {
 
     }
 
+    @Override
     public Gson getGson() {
         return gson;
+    }
+
+    @Override
+    public CommandHandler getCommandHandler() {
+        return commandHandler;
     }
 
     public ArrayList<Module> getModules() {
