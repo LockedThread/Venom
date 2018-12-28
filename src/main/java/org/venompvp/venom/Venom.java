@@ -8,7 +8,6 @@ import com.google.gson.GsonBuilder;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +26,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@ModuleInfo(name = "Venom", author = "Headshot and LilProteinShake", version = "1.0", description = "Core VenomPVP libraries")
+@ModuleInfo(name = "Venom", author = "Headshot and Simpleness", version = "2.0", description = "Core VenomPVP libraries")
 public class Venom extends Module implements Listener {
 
     public Random random;
@@ -36,7 +35,6 @@ public class Venom extends Module implements Listener {
     public final String ERROR_CONTACT_AUTHOR = "Error please contact Lil Protein Shake#3129 or Headshot#7752 on discord.";
     public CommandHandler commandHandler;
     public Gson gson;
-    private Permission perms;
     private Economy economy;
     private WorldGuardPlugin worldGuardPlugin;
     private ProtocolManager protocolManager;
@@ -52,7 +50,6 @@ public class Venom extends Module implements Listener {
     public void onEnable() {
         if (setupDependencies()) {
             final long startTime = System.currentTimeMillis();
-            perms = getServer().getServicesManager().load(Permission.class);
             economy = getServer().getServicesManager().load(Economy.class);
             worldGuardPlugin = (WorldGuardPlugin) getServer().getPluginManager().getPlugin("WorldGuard");
             protocolManager = ProtocolLibrary.getProtocolManager();
@@ -113,10 +110,6 @@ public class Venom extends Module implements Listener {
 
     public ArrayList<Module> getModules() {
         return modules;
-    }
-
-    public Permission getPerms() {
-        return perms;
     }
 
     public Economy getEconomy() {

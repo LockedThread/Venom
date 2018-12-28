@@ -1,5 +1,5 @@
 name: Venom
 main: org.venompvp.venom.Venom
-version: 1.0
+version: 2.0
 description: Essential plugin for all plugins made for VenomPVP.
 depend: [Factions, Vault, ProtocolLib, SilkSpawners]
