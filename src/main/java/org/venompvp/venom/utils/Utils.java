@@ -1,5 +1,6 @@
 package org.venompvp.venom.utils;
 
+import com.google.gson.JsonParser;
 import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
 import com.massivecraft.factions.entity.MPerm;
@@ -17,13 +18,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.venompvp.venom.Venom;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -57,7 +56,7 @@ public class Utils {
 
     public static boolean canEdit(Player player, Location location) {
         MPlayer mPlayer = MPlayer.get(player);
-        return Venom.getInstance().getWorldGuardPlugin().canBuild(player, location) && (!mPlayer.hasFaction() ||
+        return Venom.getInstance().getWorldGuardPlugin().canBuild(player, location) && (!getFactionAt(location).isNone() ||
                 mPlayer.getFaction().isPermitted(MPerm.getPermBuild(), mPlayer.getRelationTo(BoardColl.get().getFactionAt(PS.valueOf(location)))));
     }
 
@@ -183,30 +182,18 @@ public class Utils {
         return stringBuilder.toString();
     }
 
-    public static long getOfflinePlayerStatistic(OfflinePlayer player, Statistic statistic) {
-        File playerStatistics = new File(new File(Bukkit.getServer().getWorlds().get(0).getWorldFolder(), "stats"), player.getUniqueId().toString() + ".json");
-        if (playerStatistics.exists()) {
-            JSONParser parser = new JSONParser();
-            JSONObject jsonObject;
-            try {
-                jsonObject = (JSONObject) parser.parse(new FileReader(playerStatistics));
-            } catch (IOException | org.json.simple.parser.ParseException e) {
-                Venom.getInstance().getLogger().severe(e.getMessage());
-                return 0;
+    public static long getOfflinePlayTime(OfflinePlayer player) {
+        File stats = new File(new File(Bukkit.getWorlds().get(0).getWorldFolder(), "stats"), player.getUniqueId().toString() + ".json");
+        try {
+            if (stats.exists()) {
+                return new JsonParser()
+                        .parse(new FileReader(stats))
+                        .getAsJsonObject()
+                        .get("stat.playOneMinute")
+                        .getAsLong();
             }
-            StringBuilder statisticNmsName = new StringBuilder("stat.");
-            for (char character : statistic.name().toCharArray()) {
-                if (statisticNmsName.charAt(statisticNmsName.length() - 1) == '_') {
-                    statisticNmsName.setCharAt(statisticNmsName.length() - 1, Character.toUpperCase(character));
-                } else {
-                    statisticNmsName.append(Character.toLowerCase(character));
-                }
-            }
-            if (jsonObject.containsKey(statisticNmsName.toString())) {
-                return (long) jsonObject.get(statisticNmsName.toString());
-            } else {
-                return 0;
-            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
         return -1;
     }
