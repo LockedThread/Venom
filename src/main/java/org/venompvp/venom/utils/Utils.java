@@ -212,4 +212,8 @@ public class Utils {
         }
         return -1;
     }
+
+    public static int sub10OrReturn0(int i, int divisor) {
+        return i < 0 ? -1 : i % divisor > 0 && i < divisor ? i % divisor : 0;
+    }
 }
