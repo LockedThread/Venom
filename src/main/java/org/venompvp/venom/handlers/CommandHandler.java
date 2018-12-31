@@ -49,12 +49,22 @@ public class CommandHandler implements CommandExecutor {
     }
 
     private void runCommand(CommandSender sender, Command command, String[] args, String label) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (!sender.hasPermission(command.getPermission())) {
+            sender.sendMessage("No Permission!");
+            return;
+        }
         if (command.getPresetArguments().isEmpty() && args.length == 0) {
             command.execute(sender, Collections.emptyList(), label);
-        } else if (!command.getSubCommands().isEmpty()) {
+            return;
+        }
+        if (!command.getSubCommands().isEmpty()) {
             if (args.length > 0) {
                 for (Command subCommand : command.getSubCommands()) {
                     if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase())) {
+                        if (!sender.hasPermission(subCommand.getPermission())) {
+                            sender.sendMessage("No Permission!");
+                            return;
+                        }
                         if (subCommand.getPresetArguments().size() == 0) {
                             subCommand.execute(sender, Collections.emptyList(), label);
                             return;

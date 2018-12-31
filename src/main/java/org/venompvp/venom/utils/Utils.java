@@ -1,5 +1,6 @@
 package org.venompvp.venom.utils;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
@@ -20,9 +21,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.venompvp.venom.Venom;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -61,7 +63,9 @@ public class Utils {
     }
 
     public static String capitalizeEveryWord(String s) {
-        return !s.contains(" ") ? StringUtils.capitalize(s.toLowerCase()) : Arrays.stream(s.split(" ")).map(word -> StringUtils.capitalize(word.toLowerCase())).collect(Collectors.joining());
+        return !s.contains(" ") ?
+                StringUtils.capitalize(s.toLowerCase()) :
+                Arrays.stream(s.split(" ")).map(word -> StringUtils.capitalize(word.toLowerCase())).collect(Collectors.joining());
     }
 
     public static String toPercentage(double n) {
@@ -129,6 +133,8 @@ public class Utils {
         return a != null && b != null && a.getType() == b.getType() &&
                 a.hasItemMeta() &&
                 b.hasItemMeta() &&
+                a.getItemMeta().hasDisplayName() &&
+                b.getItemMeta().hasDisplayName() &&
                 a.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', b.getItemMeta().getDisplayName()));
     }
 
@@ -200,5 +206,36 @@ public class Utils {
 
     public static int sub10OrReturn0(int i, int divisor) {
         return i < 0 ? -1 : i % divisor > 0 && i < divisor ? i % divisor : 0;
+    }
+
+    public static String saveTextToHastebin(String text) {
+        try {
+            String url = "https://hastebin.com/";
+            URL obj = new URL(url + "documents");
+
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+            con.setDoOutput(true);
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), StandardCharsets.UTF_8));
+            wr.write(text);
+            wr.flush();
+            wr.close();
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String response = in.lines().collect(Collectors.joining());
+
+            in.close();
+
+            JsonElement json = new JsonParser().parse(response);
+            if (!json.isJsonObject()) throw new IOException("Cannot parse JSON");
+            return url + json.getAsJsonObject().get("key").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

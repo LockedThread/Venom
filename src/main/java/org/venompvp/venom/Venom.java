@@ -9,6 +9,10 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.dustplanet.util.SilkUtil;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
@@ -26,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @ModuleInfo(name = "Venom", author = "Headshot and Simpleness", version = "2.0", description = "Core VenomPVP libraries")
-public class Venom extends Module {
+public class Venom extends Module implements Listener {
 
     public Random random;
     public ExecutorService executorService = Executors.newFixedThreadPool(8);
@@ -74,6 +78,8 @@ public class Venom extends Module {
             if (!file.exists()) {
                 file.mkdirs();
             }
+
+            getServer().getPluginManager().registerEvents(this, this);
 
             getLogger().info("Finished loading Venom (" + (System.currentTimeMillis() - startTime) + "ms)");
         }
@@ -128,5 +134,12 @@ public class Venom extends Module {
 
     public SilkUtil getSilkUtil() {
         return silkUtil;
+    }
+
+    @EventHandler
+    public void onEntitySpawn(EntitySpawnEvent event) {
+        if (event.getEntityType() == EntityType.BOAT || event.getEntityType() == EntityType.HORSE) {
+            event.setCancelled(true);
+        }
     }
 }
