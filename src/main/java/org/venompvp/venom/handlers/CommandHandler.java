@@ -75,7 +75,7 @@ public class CommandHandler implements CommandExecutor {
                                 Class<? extends Argument> argumentClass = subCommand.getPresetArguments().get(i);
                                 if (argumentClass.getSuperclass().getName().equalsIgnoreCase(OptionalArgument.class.getName())) {
                                     if (subCommandArgs.length - 1 >= i) {
-                                        Argument argument = argumentClass.getConstructor(String.class).newInstance(subCommandArgs[i]);
+                                        OptionalArgument argument = (OptionalArgument) argumentClass.getConstructor(String.class).newInstance(subCommandArgs[i]);
                                         if (!argument.isArgumentType()) {
                                             sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
                                             return;
@@ -111,7 +111,7 @@ public class CommandHandler implements CommandExecutor {
                 Class<? extends Argument> argumentClass = command.getPresetArguments().get(i);
                 if (argumentClass.getSuperclass().getName().equalsIgnoreCase(OptionalArgument.class.getName())) {
                     if (args.length - 1 >= i) {
-                        Argument argument = argumentClass.getConstructor(String.class).newInstance(args[i]);
+                        OptionalArgument argument = (OptionalArgument) argumentClass.getConstructor(String.class).newInstance(args[i]);
                         if (!argument.isArgumentType()) {
                             sender.sendMessage(ChatColor.RED + "" + ChatColor.BOLD + "(!) " + ChatColor.RED + argument.unableToParse());
                             return;

@@ -36,6 +36,8 @@ public class VenomRootCommand extends Command implements ParentCommand {
                 new VenomHelpCommand(module),
                 new VenomVersionCommand(module),
                 new VenomEventLookupCommand(module),
-                new VenomProfileCommand(module));
+                new VenomReloadCommand(module),
+                new VenomEnableCommand(module),
+                new VenomDisableCommand(module));
     }
 }

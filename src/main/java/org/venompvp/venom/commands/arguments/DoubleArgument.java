@@ -10,10 +10,17 @@ public class DoubleArgument extends Argument<Double> {
     public boolean isArgumentType() {
         try {
             Double.valueOf(check);
+            setValue(value);
             return true;
         } catch (NumberFormatException ex) {
             return false;
         }
+
+    }
+
+    @Override
+    public Double getValue() {
+        return null;
     }
 
     @Override

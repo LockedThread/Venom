@@ -2,9 +2,9 @@ package org.venompvp.venom.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.massivecraft.factions.Rel;
 import com.massivecraft.factions.entity.BoardColl;
 import com.massivecraft.factions.entity.Faction;
-import com.massivecraft.factions.entity.MPerm;
 import com.massivecraft.factions.entity.MPlayer;
 import com.massivecraft.massivecore.ps.PS;
 import net.minecraft.server.v1_8_R3.BlockPosition;
@@ -59,7 +59,7 @@ public class Utils {
     public static boolean canEdit(Player player, Location location) {
         MPlayer mPlayer = MPlayer.get(player);
         return Venom.getInstance().getWorldGuardPlugin().canBuild(player, location) && (!getFactionAt(location).isNone() ||
-                mPlayer.getFaction().isPermitted(MPerm.getPermBuild(), mPlayer.getRelationTo(BoardColl.get().getFactionAt(PS.valueOf(location)))));
+                mPlayer.getRelationTo(BoardColl.get().getFactionAt(PS.valueOf(location))) == Rel.MEMBER);
     }
 
     public static String capitalizeEveryWord(String s) {

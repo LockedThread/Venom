@@ -21,6 +21,11 @@ public class PlayerArgument extends Argument<Player> {
     }
 
     @Override
+    public Player getValue() {
+        return value;
+    }
+
+    @Override
     public String unableToParse() {
         return check + " is unable to parse as a Player";
     }

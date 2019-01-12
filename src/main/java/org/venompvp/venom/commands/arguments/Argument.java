@@ -4,7 +4,7 @@ public abstract class Argument<T> {
 
     public String check;
 
-    private T value;
+    public T value;
 
     public Argument(String check) {
         this.check = check;
@@ -12,9 +12,8 @@ public abstract class Argument<T> {
 
     public abstract boolean isArgumentType();
 
-    public T getValue() {
-        return value;
-    }
+
+    public abstract T getValue();
 
     public void setValue(T value) {
         this.value = value;

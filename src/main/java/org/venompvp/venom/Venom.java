@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.venompvp.venom.adapters.ItemStackAdapter;
 import org.venompvp.venom.adapters.LocationAdapter;
 import org.venompvp.venom.commands.PlayTimeCommand;
+import org.venompvp.venom.commands.VenomProfileCommand;
 import org.venompvp.venom.commands.VenomRootCommand;
 import org.venompvp.venom.handlers.CommandHandler;
 import org.venompvp.venom.module.Module;
@@ -25,14 +26,14 @@ import org.venompvp.venom.module.ModuleInfo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 
 @ModuleInfo(name = "Venom", author = "Headshot and Simpleness", version = "2.0", description = "Core VenomPVP libraries")
 public class Venom extends Module implements Listener {
 
-    public Random random;
+    public ThreadLocalRandom random;
     public ExecutorService executorService = Executors.newFixedThreadPool(8);
     private static Venom instance;
     public final String ERROR_CONTACT_AUTHOR = "Error please contact Simpleness#6666 on discord.";
@@ -60,7 +61,7 @@ public class Venom extends Module implements Listener {
             instance = this;
             setupModule(this);
 
-            random = new Random();
+            random = ThreadLocalRandom.current();
             // Gson
             gson = new GsonBuilder()
                     .registerTypeAdapter(ItemStack.class, new ItemStackAdapter(this))
@@ -73,6 +74,7 @@ public class Venom extends Module implements Listener {
             commandHandler = new CommandHandler(this);
             commandHandler.register(this, new VenomRootCommand(this));
             commandHandler.register(this, new PlayTimeCommand(this));
+            commandHandler.register(this, new VenomProfileCommand(this));
 
             File file = new File(getDataFolder().getParentFile().getParent(), "profiles");
             if (!file.exists()) {
